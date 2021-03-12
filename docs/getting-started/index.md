@@ -1,212 +1,181 @@
 Getting started
 ===============
 
-This document gives a technical overview of Coderr, installation help and how you configure and use Coderr.
+This guide is intended for first time users to get Coderr up and running with the most common features.
 
-# Installing the server
+# Coderr Server
 
-Coderr is a client/server solution which means that you either need to install a server somewhere or use our hosted solution.
+The Coderr server is used to analyze error reports and to correct errors. 
 
-Coderr Server is available as three different editions.
+Select the [edition](https://coderr.io/try) that fits your requirements.
 
-<table><tr><td valign="top">
-
-### Coderr Live
-
-Our hosted service with a complete feature set. We make sure that everything is running and that the latest stable version is installed.
-
-[Register an account](https://lobby.coderr.io)
-
-</td><td valign="top">
-
-### Coderr Premise
-
-Locally installed server with a complete feature set, Activate Directory support, team management and windows authentication.
-
-[Download]()
-
-</td><td valign="top">
-
-### Coderr Community Server
-
-Open source server.
-
-[Github page](https://github.com/coderrio/coderr.server)
-
-</td></tr></table>
-
-Choose one and make sure that you have either registered an account or installed it. You can also [compare the editions](https://coderr.io/features/compare/).
 
 # Configuring your application
 
-To let Coderr discover errors and collect information about them you need to install one of our nuget packages in your application. We support both .NET Standard and .NET 4.x.
+Install one of our nuget packages in your application.
+The available packages are [listed here](../client/). 
 
-We have two types of nuget packages. 
+An `appKey` and a `sharedSecret` is required to configure the the package. They are obtained from the server. Use a web browser and visit your Coderr Server. Lets use the default application, DemoApp, to report the first errors.
 
-## Core libraries
+In the top menu, use the drop down list and select "DemoApp".
 
-Our core nuget libraries [Coderr.Client](https://coderr.io/documentation/client/libraries/core/) (.NET 4.x base library) and [Coderr.Client.NetStd](https://coderr.io/documentation/client/libraries/netstd/install.md) (.NET Standard 1.6 and above) are used to report and upload errors to the Coderr server. 
+![](../screens/gettingstarted/select_demoapp.png)
 
-You can use them directly or install one of our automation libraries.
+Next, click on "Configure your application" in the sub menu.
 
-## Automation libraries
+![](../screens/gettingstarted/configure_app_menuitem.png)
 
-If you want Coderr to detect and report all unhandled exceptions you can use our automation libraries. These libraries will not just detect exceptions but also collect information related to the error like HTTP requests, screenshots, view models and more. The goal is to make it easy to understand why the exception was thrown.
+You will now see the configuration page which contains copy/paste instructions.
 
-When you start using Coderr, it's typically not crucial that you log relevant information using your logging library, as Coderr typically includes all information that you need to understand the error.
+![](../screens/gettingstarted/appkey.png)
 
-To get help to install and configure our nuget libraries, read the  article below.
+Select the .NET library that you are using in your application and then copy the marked code into your application. 
 
-[Using the client libraries](/client/)
+Coderr is now ready to report errors.
 
-# Working with Coderr
+Each automation library requires one or two additional lines for the automatic error detection. It's typically something in line with `Coderr.Configuration.CatchMvcExceptions()`. The readme file included in the nuget package contains more information.
 
-A typical error handling flow consists of distinct steps that you need to take when working with errors.
+# Reporting the first error
 
-![](steps.png)
+To make sure that everything works, let's do a quick test. Paste the following code into the starting point (like Main in `Program.cs`).
 
-1. You need to discover errors. Traditionally it's typically done by scanning log files or by receiving errors reports from users.
-2. Once you receive an error report, you need to see if it's for an already known error or if it's a duplicate error report.
-3. When you have a list of errors, you want to work with the most important one. 
-4. When you have selected an error, you need to be able to reproduce it so that you are sure that you are correcting the correct part of the code base.
-5. Once you are sure about the cause, you can correct the error.
+```csharp
+try
+{
+    throw new InvalidOperationException("Hello world");
+}
+catch (Exception ex)
+{
+    Err.Report(ex, new { ErrTags = "backend", User = new { Id = 10, FirstName = "Arne" }});
+}
+```
 
-Coderr helps with all steps above except the last one. 
+Congratulations. You have now reported an error. 
 
-To make it easier to work with Coderr, there are three main sections in Coderr that you need to understand.
+The second parameter is used to attach context information to the error. You will see the result later in the article.
 
-![](topmenu.png)
+If you have turned on browser notifications, you will se the following notification in Windows:
 
-* **Discover** - The starting point in Coderr. Used to find the incidents that should be corrected first. Once you found one, click "Assign to me" on it.
-* **Analyze** - All incidents assigned to you will be found here, including all collected context data.
-* **Deployment insights** - See how well your team has handled errors in each application release. Do the number of unique errors increase or decrease?
+![](../screens/gettingstarted/browser_notification.png)
 
-All data can be filtered by using the application selection menu which can be seen to the far left. Click on it to see errors for one application only or for all applications.
+If not, visit your Coderr server. 
 
-## Finding errors to work with
+* [Turn on browser notifications](../features/incidents/notifications/)
 
-Use the "Discover" menu to find errors to correct. This section shows how many errors you have, how often they are occur and other information 
+# Finding the first error
 
+It's time to see how the reported error looks like in Coderr.
 
-### Suggestions / Prioritization
+Visit the Coderr Server web. The first page should now contain a reported error:
 
-In Coderr Premise and Coderr Live the "Suggestions" menu allows you to work with the errors that have the largest impact on your system. In this section, Coderr has prioritized errors based on different operational aspects. You can also add your own prioritization criteria based on your own business rules.
+![](../screens/gettingstarted/dashboard_first_error.png)
 
-![](suggestions.png)
+Coderr (commercial editions) will always recommend the most severe error. You can [customize](../features/recommendations/) how Coderr should prioritize errors.
 
-[How to configure prioritization](/features/partitions/)
+## Search
 
+The search feature allows you to quickly find the next error to solve.
 
-### Search
+![](../screens/gettingstarted/search.png)
 
-The "search" menu option allows you to filter the error list using different options like tags, free text and incident state. Your last search is automatically used every time you visit the search page.
+The following search options are available:
 
-![](search.png)
+* _**Free text**_ searches through the entire error reports after the given information.
+* _**[Application environments](../features/incidents/environments)**_ allows you to find errors that exists in a specific environment (like production).
+* _**[Tags](../features/incidents/tags)**_ are used to categorize errors to allow developers to correct a specific type of error (depending on expertize).
+* _**Incident state**_ can be used to search through other than new incidents.
+* _**[Context collections](../features/incidents/context-collections)**_ are telemetry data, either collected automatically by Coderr, or supplied by you.
 
-The "Context collection" search option is quite powerful. Enter a user id to see how many errors a specific user has got. Requires that you have attached context data to your errors. [Read more](../client/manual-reporting/)
+### Finding a specific user
 
+Since we included user information in the error report, 
 
-# Analyzing errors
+```csharp
+Err.Report(ex, new { ErrTags = "backend", User = new { Id = 10, FirstName = "Arne" }});
+```
 
-Once you have assigned an incident to yourself, you can start to use the "Analyze" section of Coderr. It's designed to be able to help you understand why the error occurred. You can find all contextual information here, and the result of all built in analysis features.
+.. we could have searched for that specific user:
 
-To get started, click on "Analyze" and then use the second drop down to switch between your incidents.
+![](../screens/gettingstarted/search_context_collection.png)
 
-![](analyze.png)
+Attaching and searching context data is a powerful way of managing errors. 
 
-## Context information
+[Learn more context collections](../features/incidents/context-collections/)
 
-Coderr includes context information out of the box.
+# Correcting an error
 
-![](context-data.gif)
+Once you have found an error to work with, click on it to see more details.
 
-But sometimes you might want to include information which is relevant to your application. 
+![](../screens/gettingstarted/discover-incident.png)
 
-You can either attach context data each time you call `Err.Report(ex, contextData)` or get it automatically included with every report by creating a [context collection provider](/client/extending/contextprovider/).
+This view is only used to decide which errors to work with.
 
-## Closing incidents
+The graph shows how frequently Coderr have received error reports for this incident.
 
-Use the "Close"-action when an incident has been corrected.
+## Quick facts
 
-![](close-button.png)
+Quick facts to the right in the right in the screenshot.
 
-Closing incidents tell Coderr to ignore all future error reports for the same error that are for same or older version of the application.
+* When the error was first detected by Coderr.
+* When the most recent report was received.
+* That the error only exists in production.
+* That we have only received reports for v1.0.1 of the application.
 
-That does however require that you use proper versioning of your application (`[minor].[major].[step/build]`).
+Coderr automatically include which application version that the error was reported for, which environment (in this case "Production") and the tag, "backend", that we attached to the error report. 
 
-![](close-dialog.png)
+[Learn more about quick facts](../features/incidents/quickfacts/)
 
-If the error resurfaces in newer versions, you will also be able to see how you solved it last time.
+## Features used when reporting
+
+The following features were used when reporting the error.
+
+* [Tags](../features/incidents/tags/) 
+* [Environment tracking](../features/incidents/environments/)
+* [Custom context data](../features/incidents/context-collections#Custom)
+
+# Solving the first error
+
+Once you have decided which error you want to work with, click on the "Assign to me" button top right.
+
+You are now in the analyze view which is designed to make it easy to accuratly and efficiently correct errors.
+
+![](../screens/gettingstarted/analyze_incident.png)
+
+With analyze, you can:
+
+* View geographic report origins
+* Browser error reports
+* Read bug reports from users
+* [Analyze business impact](/features/recommendations/)
+
+The context data ("Context collections") makes correcting bugs in production as easy as in development environments. No need to read bug reports from users or trying to find the relevant information in log files. Everything have been collected and packages for you.
+
+## Close incident
+
+Once you have corrected the error, click the "Close incident" button.
+
+![](../screens/gettingstarted/close-incident.png)
+
+By entering a version number, Coderr will automatically ignore all error reports for the same error if the reported version is less or equal with the specified version. That way, there is no need to check if reported errors already have been corrected.
+
+Learn more about [closing incidents](../features/incidents/close)
 
 # Before going to production
 
 Read this section carefully to configure Coderr correctly.
 
-### Disabling Coderr's internal errors
+## Disabling Coderr's internal errors
 
-When getting started with Coderr it makes sense to allow Coderr to throw exceptions if the configuration is invalid or if reports can't be uploaded to the Coderr Server.
+When getting started with Coderr, it makes sense to allow Coderr to throw exceptions if the configuration is invalid or if reports can't be uploaded to the Coderr Server.
 
-Once everything is OKm Coderr should not interfere with your application. Thus, you need to disable Coderr's own ability to throw exceptions.
+Once everything is OK, Coderr should not interfere with your application. Thus, you need to disable Coderr's own ability to throw exceptions.
 
 ```csharp
 Err.Configuration.ThrowExceptions = false;
 ```
 
-### Conditionally activate Coderr
+# Where to go next
 
-The main purpose of Coderr is to identify errors in production environments. 
-
-Having Coderr activated in development environments will add errors with lite value. As a developer, you typically have full control of errors happening in developer environments. 
-
-To keep the error list clean, we recommend that you conditionally activate Coderr.
- 
-#### Conditionally activate Coderr in .NET 4.x
-
-Add an app setting in your configuration file:
-
-```xml
-<appSettings>
-   <add key="Environment" value="Production">
-</appSettings>
-```
-
-Then check it when configuring Coderr (typically somewhere in `Program.cs`):
-
-```csharp
-if (ConfigurationManager.AppSettings["Environment"] == "Production")
-{
-    // This line is the one that activates the report uploads.
-    Err.Configuration.Credentials("xxx");
-}
-```
-
-#### Conditionally activate Coderr in .NET Core
-
-Add an app setting in your configuration file (`appsettings.json`):
-
-```json
-{
-  "Coderr": {
-      "Activate": true
-  },
-  /*rest of the config */
-  "ConnectionStrings": {
-    "Db": "Data Source=.;Initial Catalog=Coderr14;Integrated Security=True;Connect Timeout=15;"
-  },
-}
-
-```
-
-Then check it when configuring Coderr (typically somewhere in `Startup.cs`):
-
-```csharp
-if (Configuration["Coderr:Activate"] == "true")
-{
-    // This line is the one that activates the report uploads.
-    Err.Configuration.Credentials("xxx");
-}
-```
-
-# Further readings
+If you are using our commercial editions you might want to read about [recommendations](../features/recommendations/).
 
 Don't hesitate to [email us](mailto:help@coderr.io) if you need help. Our [Guides and support](https://coderr.io/guides-and-support/) is otherwise a perfect place to visit next.

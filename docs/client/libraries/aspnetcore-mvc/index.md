@@ -7,9 +7,7 @@ This library will report all unhandled ASP.NET and MVC exceptions. It can also r
 
 # Prerequisites
 
-* You need to have created an account at [Coderr Live](https://lobby.coderr.io) or installed one of our local servers.
-* You should also have installed and configured the ASP.NET Core MVC [nuget library](https://www.nuget.org/packages/Coderr.Client.AspNetCore.Mvc/).
-* If you need help installing the nuget package, read our [installation guide](./install/).
+You should also have installed and configured the ASP.NET Core MVC [nuget library](https://www.nuget.org/packages/Coderr.Client.AspNetCore.Mvc/).
 
 
 # Customization options
@@ -30,11 +28,11 @@ Err.Configuration.TrackInvalidModelStates();
 
 You will now get one incident reported per invalid form as shown below.
 
-![](modelstate-incident.png)
+![](/screens/libraries/aspnetcore-mvc/modelstate-incident.png)
 
 The collection itself contains the fields that was invalid as this:
 
-![](collections/modelstate.png)
+![](/screens/libraries/aspnetcore-mvc/collections/modelstate.png)
 
 ## Tracking slow requests
 
@@ -63,7 +61,7 @@ Err.Configuration.TrackAuthenticationFailures();
 
 The example below shows how authentication failures are reported:
 
-![](authentication-incident.png)
+![](/screens/libraries/aspnetcore-mvc/authentication-incident.png)
 
 
 ## Report JavaScript errors
@@ -76,19 +74,19 @@ The ASP.NET Core MVC library can report JavaScript errors. Simply activate this 
 
 Now all unhandled JavaScript errors will be reported to Coderr, as follows:
 
-![](javascript-incident.png)
+![](/screens/libraries/aspnetcore-mvc/javascript-incident.png)
 
 ### JavaScript context collections
 
 The following collections are included for JavaScript errors.
 
-![](js-collections/document.png)
+![](/screens/libraries/aspnetcore-mvc/js-collections/document.png)
 
-![](js-collections/window.png)
+![](/screens/libraries/aspnetcore-mvc/js-collections/window.png)
 
-![](js-collections/navigator.png)
+![](/screens/libraries/aspnetcore-mvc/js-collections/navigator.png)
 
-![](js-collections/screen.png)
+![](/screens/libraries/aspnetcore-mvc/js-collections/screen.png)
 
 
 ## Included context collections in ASP.NET MVC.
@@ -99,31 +97,31 @@ These collections are included for all ASP.NET Core MVC exceptions.
 
 Information about the action and why it was selected.
 
-![](collections/actiondescriptor.png)
+![](/screens/libraries/aspnetcore-mvc/collections/actiondescriptor.png)
 
 ### Form
 
 Information supplied in the HTTP post.
 
-![](collections/form.png)
+![](/screens/libraries/aspnetcore-mvc/collections/form.png)
 
 ### HttpRequest
 
 Properties from the `HttpRequest` object in MVC.
 
-![](collections/request.png)
+![](/screens/libraries/aspnetcore-mvc/collections/request.png)
 
 ### HttpRequestHeaders
 
 ALL headers from the HTTP request.
 
-![](collections/httprequestheaders.png)
+![](/screens/libraries/aspnetcore-mvc/collections/httprequestheaders.png)
 
 ### ModelState
 
 Did we receive a valid model?
 
-![](collections/modelstate.png)
+![](/screens/libraries/aspnetcore-mvc/collections/modelstate.png)
 
 ### TempData
 
@@ -140,7 +138,7 @@ TempData["DemoKey"] = new {
 
 Result:
 
-![](collections/tempdata.png)
+![](/screens/libraries/aspnetcore-mvc/collections/tempdata.png)
 
 ### ViewData / ViewBag
 
@@ -159,7 +157,7 @@ ViewBag.Model = new
 
 Result:
 
-![](collections/viewdata.png)
+![](/screens/libraries/aspnetcore-mvc/collections/viewdata.png)
 
 
 # Links
